@@ -1,0 +1,23 @@
+package com.lupin.wellness.auth.constants;
+
+import java.time.ZoneId;
+
+public class Constants {
+    public static final String EMAIL_ID = "emailId";
+    public static final String TENANT_ID = "tenantId";
+    public static final String USER_ID = "userId";
+    public static final String ROLE_ID = "roleId";
+    public static final String EMAIL_VALIDATION_REGEX = "^(?=.{1,64}@)[A-Za-z0-9\\+_-]+(\\.[A-Za-z0-9\\+_-]+)*@[^-][A-Za-z0-9\\+-]+(\\.[A-Za-z0-9\\+-]+)*(\\.[A-Za-z]{2,})$";
+    public static final ZoneId zoneId = ZoneId.of("UTC");
+    public static final String SUCCESS = "SUCCESS";
+    public static final String FAILED = "FAILED";
+
+    // #22838 - This will be used by App to help identify the gratification for Steps Task
+    public static final long STEPS_TASK_LOG_ID = -9999;
+    public static final String USER_EDUCATION_IMAGE_PATH = "https://devpyrgstorageacc.blob.core.windows.net/at-risk/static_images/IcGradientAppIcon.png";
+
+    private Constants() {
+        throw new IllegalStateException("Utility class");
+    }
+
+}
