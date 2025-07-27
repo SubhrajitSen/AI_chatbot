@@ -1,0 +1,68 @@
+package com.lupin.wellness.auth.controllers;
+
+import com.lupin.wellness.auth.domain.Tenant;
+import com.lupin.wellness.auth.models.requests.GenerateOtpRequest;
+import com.lupin.wellness.auth.models.requests.TenantCreateRequest;
+import com.lupin.wellness.auth.models.requests.TenantUpdateRequest;
+import com.lupin.wellness.auth.models.requests.ValidateOtpRequest;
+import com.lupin.wellness.auth.services.api.AuthUserService;
+import com.lupin.wellness.constants.APIConstants;
+import com.lupin.wellness.utils.aop.annotations.ValidateArguments;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.concurrent.Callable;
+
+@RestController
+
+@RequestMapping(APIConstants.API_WELLNESS_AUTH_V1)
+@Validated
+public class AuthUserController {
+    @Autowired
+    AuthUserService authUserService;
+
+    @PostMapping(APIConstants.API_GENERATE_OTP)
+    @ValidateArguments
+    public Callable<ResponseEntity<?>> generateOtp(@RequestBody @Valid GenerateOtpRequest generateOtpRequest) {
+        return () -> ResponseEntity.ok(authUserService.generateOtp(generateOtpRequest));
+    }
+
+    @PostMapping(APIConstants.API_VALIDATE_OTP)
+    @ValidateArguments
+    public Callable<ResponseEntity<?>> validateOtp(@RequestBody @Valid ValidateOtpRequest validateOtpRequest) {
+        return () -> ResponseEntity.ok(authUserService.validateOtp(validateOtpRequest));
+    }
+
+    @PostMapping(APIConstants.API_TENANT)
+    @ValidateArguments
+    public Callable<ResponseEntity<?>> addTenant(@RequestBody @Valid TenantCreateRequest tenantCreateRequest) {
+        return () -> {
+            Tenant tenant = authUserService.createTenant(tenantCreateRequest);
+            return ResponseEntity.ok(authUserService.getDetailedTenant(tenant.getTenantId()));
+        };
+    }
+
+    @PutMapping(APIConstants.API_TENANT+"/{tenantId}")
+    @ValidateArguments
+    public Callable<ResponseEntity<?>> updateTenant(@PathVariable Long tenantId, @RequestBody @Valid TenantUpdateRequest tenantUpdateRequest) {
+        return () -> {
+            Tenant tenant = authUserService.updateTenant(tenantUpdateRequest, tenantId);
+            return ResponseEntity.ok(authUserService.getDetailedTenant(tenant.getTenantId()));
+        };
+    }
+
+    @GetMapping(APIConstants.API_TENANT+"/{tenantId}")
+    @ValidateArguments
+    public Callable<ResponseEntity<?>> getTenant(@PathVariable Long tenantId) {
+        return () -> ResponseEntity.ok(authUserService.getDetailedTenant(tenantId));
+    }
+
+    @PutMapping(APIConstants.API_TENANT+"/{tenantId}/package")
+    @ValidateArguments
+    public Callable<ResponseEntity<?>> linkPackageToTenant(@PathVariable Long tenantId, @RequestParam Long packageId) {
+        return () -> ResponseEntity.ok(authUserService.updateDiagnosticPackage(tenantId, packageId));
+    }
+}
